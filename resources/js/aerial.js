@@ -10,11 +10,16 @@ Aerial.mount = function (component, state = {}, methods = [], route = '/aerial/c
 
             return methods
         }, {}),
+        $aerial: {
+            processing: false,
+        }
     }
 }
 
 Aerial.call = function (component, method, route) {
     return async function (...args) {
+        this.$aerial.processing = true
+
         const state = Object.fromEntries(Object.entries(this).filter(entry => {
             const [name, value] = entry
 
@@ -46,6 +51,8 @@ Aerial.call = function (component, method, route) {
 
                 this[key] = value
             })
+
+            this.$aerial.processing = false
 
             return response.result
         });
