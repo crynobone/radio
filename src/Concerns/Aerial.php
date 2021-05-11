@@ -63,12 +63,10 @@ trait Aerial
     {
         return collect(
             $this->getReflection()->getMethods(ReflectionMethod::IS_PUBLIC)
-        )->filter(function (ReflectionMethod $method) {
-            return ! str_starts_with($method->getName(), '__')
-                && ! method_exists(Aerial::class, $method->getName());
-        })->map(function (ReflectionMethod $method) {
-            return $method->getName();
-        })->values();
+        )
+            ->filter(fn (ReflectionMethod $method) => $this->isValidMethodName($method->getName()))
+            ->map(fn (ReflectionMethod $method) => $method->getName())
+            ->values();
     }
 
     public function getAerialState(): Collection
@@ -86,6 +84,11 @@ trait Aerial
 
             return [$property->getName() => $value];
         });
+    }
+
+    public function isValidMethodName(string $name)
+    {
+        return ! str_starts_with($name, '__') && ! method_exists(Aerial::class, $name);
     }
 
     protected function getReflection(): ReflectionClass
