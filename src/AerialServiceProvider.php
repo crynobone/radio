@@ -20,6 +20,11 @@ class AerialServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        $this->registerBladeDirectives();
+    }
+
+    public function registerBladeDirectives(): static
+    {
         Blade::directive('aerial', function (string $expression) {
             return "<?php \Aerial\aerial({$expression}); ?>";
         });
@@ -34,5 +39,7 @@ class AerialServiceProvider extends PackageServiceProvider
                 csrf_token(),
             );
         });
+
+        return $this;
     }
 }
