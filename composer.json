@@ -1,0 +1,44 @@
+{
+    "name": "aerial/aerial",
+    "description": "A component-centric backend communication layer for Alpine.js.",
+    "license": "MIT",
+    "require": {
+        "php": "^8.0",
+        "illuminate/database": "^8.41",
+        "illuminate/http": "^8.41",
+        "illuminate/support": "^8.41",
+        "spatie/laravel-package-tools": "^1.7"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^6.0",
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
+        "psr-4": {
+            "Aerial\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Aerial\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Aerial\\AerialServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": "./vendor/bin/phpunit"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
