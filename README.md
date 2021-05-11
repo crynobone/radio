@@ -16,3 +16,9 @@ composer require aerial/aerial
 2. Do some state related setup.
 3. Use `@aerial` in Blade to setup your Alpine component.
 4. Update your state and call a method, everything is updated. It's magic!
+
+## Security
+
+## Contributing
+
+## License
