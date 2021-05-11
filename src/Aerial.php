@@ -64,7 +64,8 @@ trait Aerial
         return collect(
             $this->getReflection()->getMethods(ReflectionMethod::IS_PUBLIC)
         )->filter(function (ReflectionMethod $method) {
-            return ! str_starts_with($method->getName(), '__');
+            return ! str_starts_with($method->getName(), '__')
+                && ! method_exists(Aerial::class, $method->getName());
         })->map(function (ReflectionMethod $method) {
             return $method->getName();
         })->values();
