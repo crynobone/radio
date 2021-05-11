@@ -21,7 +21,7 @@ class AerialServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         Blade::directive('aerial', function (string $expression) {
-            return "<?php \aerial({$expression}); ?>";
+            return "<?php \Aerial\aerial({$expression}); ?>";
         });
 
         Blade::directive('aerialScripts', function () {
