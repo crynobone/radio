@@ -15,7 +15,8 @@ class AerialServiceProvider extends PackageServiceProvider
         $package
             ->name('aerial')
             ->hasAssets()
-            ->hasRoute('web');
+            ->hasRoute('web')
+            ->hasConfigFile();
     }
 
     public function packageBooted(): void
