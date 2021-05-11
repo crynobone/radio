@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Aerial;
 
+use Aerial\Contracts\Castable;
 use Exception;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
@@ -49,7 +50,7 @@ trait Aerial
                     $value = EloquentCollection::make($value);
                 } elseif ($type === Stringable::class) {
                     $value = new Stringable($value);
-                } elseif (class_exists($type) && in_array(AerialCast::class, class_implements($type))) {
+                } elseif (class_exists($type) && in_array(Castable::class, class_implements($type))) {
                     $value = $type::fromAerial($value);
                 }
             }
@@ -78,7 +79,7 @@ trait Aerial
 
             if ($value instanceof Stringable) {
                 $value = $value->__toString();
-            } elseif ($value instanceof AerialCast) {
+            } elseif ($value instanceof Castable) {
                 $value = $value->toAerial();
             }
 

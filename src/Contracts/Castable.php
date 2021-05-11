@@ -2,9 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace Aerial;
+namespace Aerial\Contracts;
 
-interface AerialCast
+interface Castable
 {
     public function toAerial();
 
