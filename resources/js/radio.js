@@ -64,16 +64,24 @@ Radio.call = function (component, method, route) {
                 'X-Requested-With': 'XMLHttpRequest',
             },
         }).then(async res => {
-            const json = await res.json()
-            const html = await res.text()
+            this.$radio.processing = false
+
+            const response = await res.text()
+
+            let json
+
+            try {
+                json = JSON.parse(response)
+            } catch (error) {
+                this.showHtmlModal(response)
+
+                return
+            }
 
             if (! res.ok && json.errors) {
                 this.$radio.errors.store = json.errors
-                return res
-            }
 
-            if (!! html.text().match(/<script>Sfdump\(".+"\)<\/script>/)) {
-                this.showHtmlModal(html)
+                return res
             }
 
             Object.entries(json.state).forEach(entry => {
@@ -84,12 +92,10 @@ Radio.call = function (component, method, route) {
                 }
             })
 
-            this.$radio.processing = false
-
             return json.result
         }).catch(error => {
             console.log(error)
-        });
+        })
     }
 }
 
@@ -111,6 +117,8 @@ Radio.showHtmlModal = function (html) {
         modal.style.width = '100vw'
         modal.style.height = '100vh'
         modal.style.padding = '50px'
+        modal.style.top = 0
+        modal.style.left = 0
         modal.style.backgroundColor = 'rgba(0, 0, 0, .6)'
         modal.style.zIndex = 200000
     }
