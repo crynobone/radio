@@ -7,8 +7,8 @@ namespace Aerial;
 use Exception;
 use Illuminate\Support\Facades\URL;
 
-    function aerial(string $component, array $data = []): void {
 if (! function_exists('Aerial\aerial')) {
+    function aerial(string $component, array $data = []): void {
         if (! class_exists($component)) {
             throw new Exception("[Aerial] Class `{$component}` does not exist.");
         }
