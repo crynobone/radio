@@ -10,7 +10,7 @@ class InitTest extends TestCase
     public function test()
     {
         $this->browse(function (Browser $browser) {
-            $browser->visitRoute('browser.init');
+            $browser->visit('/browser/init');
 
             $browser->assertSee('Thanks for using Aerial!');
         });

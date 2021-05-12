@@ -3,7 +3,6 @@
 namespace Aerial\Tests\Browser;
 
 use Aerial\AerialServiceProvider;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Orchestra\Testbench\Dusk\Options;
@@ -27,15 +26,15 @@ abstract class TestCase extends BaseTestCase
 
         parent::setUp();
 
-        $this->tweakApplication(function () {
+        $this->tweakApplication(function ($app) {
             $reflection = new ReflectionClass(static::class);
             $folder = dirname($reflection->getFileName());
 
             if (file_exists($routes = $folder . '/routes.php')) {
-                Route::middleware('web')->group($routes);
+                $app['router']->middleware('web')->group($routes);
             }
 
-            View::replaceNamespace('browser', __DIR__);
+            $app['view']->replaceNamespace('browser', __DIR__);
         });
     }
 
