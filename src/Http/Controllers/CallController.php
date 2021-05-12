@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Aerial\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class CallController
 {
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): JsonResponse
     {
         $component = app($request->input('component'));
 

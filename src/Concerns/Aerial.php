@@ -86,7 +86,7 @@ trait Aerial
         });
     }
 
-    public function isValidMethodName(string $name)
+    public function isValidMethodName(string $name): bool
     {
         return ! str_starts_with($name, '__') && ! method_exists(Aerial::class, $name);
     }
