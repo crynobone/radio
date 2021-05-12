@@ -2,6 +2,4 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/browser/init', function () {
-
-})->name('browser.init');
+Route::view('/browser/init', 'browser::init.view')->name('browser.init');
