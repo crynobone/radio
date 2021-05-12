@@ -73,7 +73,7 @@ Radio.call = function (component, method, route) {
             try {
                 json = JSON.parse(response)
             } catch (error) {
-                this.showHtmlModal(response)
+                Radio.showModal(response)
 
                 return
             }
@@ -99,7 +99,7 @@ Radio.call = function (component, method, route) {
     }
 }
 
-Radio.showHtmlModal = function (html) {
+Radio.showModal = function (html) {
     let page = document.createElement('html')
     page.innerHTML = html
     page.querySelectorAll('a').forEach(a =>
@@ -136,15 +136,15 @@ Radio.showHtmlModal = function (html) {
     iframe.contentWindow.document.write(page.outerHTML)
     iframe.contentWindow.document.close()
 
-    modal.addEventListener('click', () => this.hideHtmlModal(modal))
+    modal.addEventListener('click', () => Radio.hideModal(modal))
     modal.setAttribute('tabindex', 0)
     modal.addEventListener('keydown', e => {
-        if (e.key === 'Escape') this.hideHtmlModal(modal)
+        if (e.key === 'Escape') Radio.hideModal(modal)
     })
     modal.focus()
 }
 
-Radio.hideHtmlModal = function (modal) {
+Radio.hideModal = function (modal) {
     modal.outerHTML = ''
     document.body.style.overflow = 'visible'
 }
