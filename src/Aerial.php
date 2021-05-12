@@ -20,7 +20,7 @@ trait Aerial
         if (! method_exists($this, $method)) {
             throw new Exception(
                 sprintf(
-                    '[Aerial] Method %s does not exist on component %s.',
+                    '[Aerial] Method `%s` does not exist on component `%s`.',
                     $method,
                     static::class,
                 ),
