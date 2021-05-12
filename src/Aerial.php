@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace Aerial\Concerns;
+namespace Aerial;
 
 use Aerial\Contracts\Castable;
 use Exception;
