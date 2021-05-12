@@ -64,24 +64,79 @@ Aerial.call = function (component, method, route) {
                 'X-Requested-With': 'XMLHttpRequest',
             },
         }).then(async res => {
-            const response = await res.json()
+            const json = await res.json()
+            const html = await res.text()
 
-            if (! res.ok && response.errors) {
-                this.$aerial.errors.store = response.errors
+            if (! res.ok && json.errors) {
+                this.$aerial.errors.store = json.errors
                 return res
             }
 
-            Object.entries(response.state).forEach(entry => {
+            if (!! html.text().match(/<script>Sfdump\(".+"\)<\/script>/)) {
+                this.showHtmlModal(html)
+            }
+
+            Object.entries(json.state).forEach(entry => {
                 const [key, value] = entry
 
-                this[key] = value
+                if (this[key] !== value) {
+                    this[key] = value
+                }
             })
 
             this.$aerial.processing = false
 
-            return response.result
+            return json.result
         }).catch(error => {
             console.log(error)
         });
     }
+}
+
+Aerial.showHtmlModal = function (html) {
+    let page = document.createElement('html')
+    page.innerHTML = html
+    page.querySelectorAll('a').forEach(a =>
+        a.setAttribute('target', '_top')
+    )
+
+    let modal = document.getElementById('aerial-error')
+
+    if (typeof modal != 'undefined' && modal != null) {
+        modal.innerHTML = ''
+    } else {
+        modal = document.createElement('div')
+        modal.id = 'aerial-error'
+        modal.style.position = 'fixed'
+        modal.style.width = '100vw'
+        modal.style.height = '100vh'
+        modal.style.padding = '50px'
+        modal.style.backgroundColor = 'rgba(0, 0, 0, .6)'
+        modal.style.zIndex = 200000
+    }
+
+    let iframe = document.createElement('iframe')
+    iframe.style.backgroundColor = '#17161A'
+    iframe.style.borderRadius = '5px'
+    iframe.style.width = '100%'
+    iframe.style.height = '100%'
+    modal.appendChild(iframe)
+
+    document.body.prepend(modal)
+    document.body.style.overflow = 'hidden'
+    iframe.contentWindow.document.open()
+    iframe.contentWindow.document.write(page.outerHTML)
+    iframe.contentWindow.document.close()
+
+    modal.addEventListener('click', () => this.hideHtmlModal(modal))
+    modal.setAttribute('tabindex', 0)
+    modal.addEventListener('keydown', e => {
+        if (e.key === 'Escape') this.hideHtmlModal(modal)
+    })
+    modal.focus()
+}
+
+Aerial.hideHtmlModal = function (modal) {
+    modal.outerHTML = ''
+    document.body.style.overflow = 'visible'
 }
