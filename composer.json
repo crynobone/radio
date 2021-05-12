@@ -11,6 +11,7 @@
     },
     "require-dev": {
         "orchestra/testbench": "^6.0",
+        "orchestra/testbench-dusk": "^6.17",
         "phpunit/phpunit": "^9.5"
     },
     "autoload": {
@@ -37,7 +38,9 @@
         "sort-packages": true
     },
     "scripts": {
-        "test": "./vendor/bin/phpunit"
+        "browser-test": "./vendor/bin/phpunit --testsuite=Browser",
+        "feature-test": "./vendor/bin/phpunit --testsuite=Feature",
+        "unit-test": "./vendor/bin/phpunit --testsuite=Unit"
     },
     "minimum-stability": "dev",
     "prefer-stable": true
