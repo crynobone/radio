@@ -1,9 +1,9 @@
 <?php
 
-namespace Aerial\Tests\Browser\Init;
+namespace Radio\Tests\Browser\Init;
 
 use Laravel\Dusk\Browser;
-use Aerial\Tests\Browser\TestCase;
+use Radio\Tests\Browser\TestCase;
 
 class InitTest extends TestCase
 {
@@ -12,7 +12,7 @@ class InitTest extends TestCase
         $this->browse(function (Browser $browser) {
             $browser->visit('/browser/init');
 
-            $browser->assertSee('Thanks for using Aerial!');
+            $browser->assertSee('Thanks for using Radio!');
         });
     }
 }

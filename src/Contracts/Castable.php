@@ -2,11 +2,11 @@
 
 declare(strict_types = 1);
 
-namespace Aerial\Contracts;
+namespace Radio\Contracts;
 
 interface Castable
 {
-    public static function fromAerial($value);
+    public static function fromRadio($value);
 
-    public function toAerial();
+    public function toRadio();
 }

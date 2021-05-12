@@ -2,15 +2,15 @@
 
 declare(strict_types = 1);
 
-namespace Aerial;
+namespace Radio;
 
 use Exception;
 use Illuminate\Support\Facades\URL;
 
-if (! function_exists('Aerial\aerial')) {
-    function aerial(string $component, array $data = []): void {
+if (! function_exists('Radio\radio')) {
+    function radio(string $component, array $data = []): void {
         if (! class_exists($component)) {
-            throw new Exception("[Aerial] Class `{$component}` does not exist.");
+            throw new Exception("[Radio] Class `{$component}` does not exist.");
         }
 
         $component = app($component);
@@ -18,11 +18,11 @@ if (! function_exists('Aerial\aerial')) {
         app()->call($component, $data);
 
         $constructor = htmlspecialchars(sprintf(
-            'Aerial.mount("%s", %s, %s, "%s")',
+            'Radio.mount("%s", %s, %s, "%s")',
             addslashes($component::class),
-            $component->getAerialState()->toJson(),
-            $component->getAerialMethods()->toJson(),
-            URL::signedRoute('aerial.call'),
+            $component->getRadioState()->toJson(),
+            $component->getRadioMethods()->toJson(),
+            URL::signedRoute('radio.call'),
         ), ENT_QUOTES);
 
         echo $constructor;

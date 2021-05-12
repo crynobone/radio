@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace Aerial\Http\Controllers;
+namespace Radio\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -13,18 +13,18 @@ class CallController
     {
         $component = app($request->input('component'));
 
-        $component->hydrateAerialState(
+        $component->hydrateRadioState(
             $request->input('state'),
         );
 
-        $result = $component->callAerialMethod(
+        $result = $component->callRadioMethod(
             $request->input('method'),
             array_values($request->input('args')),
         );
 
         return response()->json([
             'result' => $result,
-            'state' => $component->getAerialState(),
+            'state' => $component->getRadioState(),
         ]);
     }
 }

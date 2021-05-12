@@ -1,12 +1,12 @@
 <?php
 
-namespace Aerial\Tests\Browser\Init;
+namespace Radio\Tests\Browser\Init;
 
-use Aerial\Aerial;
+use Radio\Radio;
 
 class Component
 {
-    use Aerial;
+    use Radio;
 
-    public $message = 'Thanks for using Aerial!';
+    public $message = 'Thanks for using Radio!';
 }

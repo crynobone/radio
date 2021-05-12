@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-use Aerial\Http\Controllers\CallController;
+use Radio\Http\Controllers\CallController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/aerial/call', CallController::class)->middleware(config('aerial.middleware'))->name('aerial.call');
+Route::post('/radio/call', CallController::class)->middleware(config('radio.middleware'))->name('radio.call');

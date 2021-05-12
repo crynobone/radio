@@ -1,6 +1,6 @@
 <?php
 
-namespace Aerial\Tests;
+namespace Radio\Tests;
 
 use Orchestra\Testbench\TestCase as BaseTestCase;
 

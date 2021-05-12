@@ -1,5 +1,5 @@
 {
-    "name": "aerial/aerial",
+    "name": "radio/radio",
     "description": "A component-centric backend communication layer for Alpine.js.",
     "license": "MIT",
     "require": {
@@ -19,18 +19,18 @@
             "src/helpers.php"
         ],
         "psr-4": {
-            "Aerial\\": "src"
+            "Radio\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Aerial\\Tests\\": "tests"
+            "Radio\\Tests\\": "tests"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Aerial\\AerialServiceProvider"
+                "Radio\\RadioServiceProvider"
             ]
         }
     },

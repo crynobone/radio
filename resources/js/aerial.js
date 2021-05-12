@@ -1,16 +1,16 @@
-window.Aerial = {
+window.Radio = {
     token: document.currentScript.dataset.token,
 }
 
-Aerial.mount = function (component, state = {}, methods = [], route = '/aerial/call') {
+Radio.mount = function (component, state = {}, methods = [], route = '/radio/call') {
     return {
         ...state,
         ...methods.reduce(function (methods, method) {
-            methods[method] = Aerial.call(component, method, route)
+            methods[method] = Radio.call(component, method, route)
 
             return methods
         }, {}),
-        $aerial: {
+        $radio: {
             processing: false,
             errors: {
                 store: {},
@@ -34,11 +34,11 @@ Aerial.mount = function (component, state = {}, methods = [], route = '/aerial/c
     }
 }
 
-Aerial.call = function (component, method, route) {
+Radio.call = function (component, method, route) {
     return async function (...args) {
-        this.$aerial.errors.reset()
+        this.$radio.errors.reset()
 
-        this.$aerial.processing = true
+        this.$radio.processing = true
 
         const state = Object.fromEntries(Object.entries(this).filter(entry => {
             const [name, value] = entry
@@ -60,7 +60,7 @@ Aerial.call = function (component, method, route) {
             headers: {
                 'Accepts': 'application/json',
                 'Content-Type': 'application/json',
-                'X-CSRF-Token': window.Aerial.token,
+                'X-CSRF-Token': window.Radio.token,
                 'X-Requested-With': 'XMLHttpRequest',
             },
         }).then(async res => {
@@ -68,7 +68,7 @@ Aerial.call = function (component, method, route) {
             const html = await res.text()
 
             if (! res.ok && json.errors) {
-                this.$aerial.errors.store = json.errors
+                this.$radio.errors.store = json.errors
                 return res
             }
 
@@ -84,7 +84,7 @@ Aerial.call = function (component, method, route) {
                 }
             })
 
-            this.$aerial.processing = false
+            this.$radio.processing = false
 
             return json.result
         }).catch(error => {
@@ -93,20 +93,20 @@ Aerial.call = function (component, method, route) {
     }
 }
 
-Aerial.showHtmlModal = function (html) {
+Radio.showHtmlModal = function (html) {
     let page = document.createElement('html')
     page.innerHTML = html
     page.querySelectorAll('a').forEach(a =>
         a.setAttribute('target', '_top')
     )
 
-    let modal = document.getElementById('aerial-error')
+    let modal = document.getElementById('radio-error')
 
     if (typeof modal != 'undefined' && modal != null) {
         modal.innerHTML = ''
     } else {
         modal = document.createElement('div')
-        modal.id = 'aerial-error'
+        modal.id = 'radio-error'
         modal.style.position = 'fixed'
         modal.style.width = '100vw'
         modal.style.height = '100vh'
@@ -136,7 +136,7 @@ Aerial.showHtmlModal = function (html) {
     modal.focus()
 }
 
-Aerial.hideHtmlModal = function (modal) {
+Radio.hideHtmlModal = function (modal) {
     modal.outerHTML = ''
     document.body.style.overflow = 'visible'
 }

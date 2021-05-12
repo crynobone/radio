@@ -2,9 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace Aerial;
+namespace Radio;
 
-use Aerial\Contracts\Castable;
+use Radio\Contracts\Castable;
 use Exception;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
@@ -13,14 +13,14 @@ use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
 
-trait Aerial
+trait Radio
 {
-    public function callAerialMethod(string $method, array $args = [])
+    public function callRadioMethod(string $method, array $args = [])
     {
         if (! method_exists($this, $method)) {
             throw new Exception(
                 sprintf(
-                    '[Aerial] Method `%s` does not exist on component `%s`.',
+                    '[Radio] Method `%s` does not exist on component `%s`.',
                     $method,
                     static::class,
                 ),
@@ -32,7 +32,7 @@ trait Aerial
         );
     }
 
-    public function hydrateAerialState(array $state = []): void
+    public function hydrateRadioState(array $state = []): void
     {
         $reflection = $this->getReflection();
 
@@ -51,7 +51,7 @@ trait Aerial
                 } elseif ($type === Stringable::class) {
                     $value = new Stringable($value);
                 } elseif (class_exists($type) && in_array(Castable::class, class_implements($type))) {
-                    $value = $type::fromAerial($value);
+                    $value = $type::fromRadio($value);
                 }
             }
 
@@ -59,7 +59,7 @@ trait Aerial
         }
     }
 
-    public function getAerialMethods(): Collection
+    public function getRadioMethods(): Collection
     {
         return collect(
             $this->getReflection()->getMethods(ReflectionMethod::IS_PUBLIC)
@@ -69,7 +69,7 @@ trait Aerial
             ->values();
     }
 
-    public function getAerialState(): Collection
+    public function getRadioState(): Collection
     {
         return collect(
             $this->getReflection()->getProperties(ReflectionProperty::IS_PUBLIC)
@@ -79,7 +79,7 @@ trait Aerial
             if ($value instanceof Stringable) {
                 $value = $value->__toString();
             } elseif ($value instanceof Castable) {
-                $value = $value->toAerial();
+                $value = $value->toRadio();
             }
 
             return [$property->getName() => $value];
@@ -88,7 +88,7 @@ trait Aerial
 
     public function isValidMethodName(string $name): bool
     {
-        return ! str_starts_with($name, '__') && ! method_exists(Aerial::class, $name);
+        return ! str_starts_with($name, '__') && ! method_exists(Radio::class, $name);
     }
 
     protected function getReflection(): ReflectionClass

@@ -2,18 +2,18 @@
 
 declare(strict_types = 1);
 
-namespace Aerial;
+namespace Radio;
 
 use Illuminate\Support\Facades\Blade;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class AerialServiceProvider extends PackageServiceProvider
+class RadioServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
         $package
-            ->name('aerial')
+            ->name('radio')
             ->hasAssets()
             ->hasRoute('web')
             ->hasConfigFile();
@@ -26,16 +26,16 @@ class AerialServiceProvider extends PackageServiceProvider
 
     public function registerBladeDirectives(): static
     {
-        Blade::directive('aerial', function (string $expression) {
-            return "<?php \Aerial\aerial({$expression}); ?>";
+        Blade::directive('radio', function (string $expression) {
+            return "<?php \Radio\radio({$expression}); ?>";
         });
 
-        Blade::directive('aerialScripts', function () {
+        Blade::directive('radioScripts', function () {
             return sprintf(
                 '<script src="%s" data-token="%s"></script>',
                 mix(
-                    'aerial.js',
-                    'vendor/aerial',
+                    'radio.js',
+                    'vendor/radio',
                 ),
                 csrf_token(),
             );

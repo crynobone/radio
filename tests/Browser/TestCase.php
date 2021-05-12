@@ -1,8 +1,8 @@
 <?php
 
-namespace Aerial\Tests\Browser;
+namespace Radio\Tests\Browser;
 
-use Aerial\AerialServiceProvider;
+use Radio\RadioServiceProvider;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Orchestra\Testbench\Dusk\Options;
@@ -14,7 +14,7 @@ abstract class TestCase extends BaseTestCase
     protected function getPackageProviders($app)
     {
         return [
-            AerialServiceProvider::class,
+            RadioServiceProvider::class,
         ];
     }
 
