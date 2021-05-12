@@ -2,11 +2,9 @@
 
 namespace Radio\Tests\Browser;
 
-use Radio\RadioServiceProvider;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\View;
 use Orchestra\Testbench\Dusk\Options;
 use Orchestra\Testbench\Dusk\TestCase as BaseTestCase;
+use Radio\RadioServiceProvider;
 use ReflectionClass;
 
 abstract class TestCase extends BaseTestCase
