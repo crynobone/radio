@@ -15,7 +15,9 @@ if (! function_exists('Radio\radio')) {
 
         $component = app($component);
 
-        app()->call($component, $data);
+        if (method_exists($component, '__invoke')) {
+            app()->call($component, $data);
+        }
 
         $constructor = htmlspecialchars(sprintf(
             'Radio.mount("%s", %s, %s, "%s")',

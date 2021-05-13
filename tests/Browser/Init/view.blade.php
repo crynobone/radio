@@ -2,4 +2,10 @@
 
 <div x-data="@radio(\Radio\Tests\Browser\Init\Component::class)">
     <p x-text="message"></p>
+
+    <button x-on:click.prevent="changeMessage()" dusk="change-message">
+        Change Message
+    </button>
 </div>
+
+@radioScripts

@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Radio;
 
+use Exception;
 use Illuminate\Support\Facades\Blade;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -31,12 +32,15 @@ class RadioServiceProvider extends PackageServiceProvider
         });
 
         Blade::directive('radioScripts', function () {
+            try {
+                $script = mix('radio.js', 'vendor/radio');
+            } catch (Exception $e) {
+                $script = route('radio.scripts', ['path' => 'radio.js']);
+            }
+
             return sprintf(
                 '<script src="%s" data-token="%s"></script>',
-                mix(
-                    'radio.js',
-                    'vendor/radio',
-                ),
+                $script,
                 csrf_token(),
             );
         });
