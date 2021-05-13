@@ -114,11 +114,11 @@ Radio.showModal = function (html) {
         modal = document.createElement('div')
         modal.id = 'radio-error'
         modal.style.position = 'fixed'
-        modal.style.width = '100vw'
-        modal.style.height = '100vh'
         modal.style.padding = '50px'
         modal.style.top = 0
         modal.style.left = 0
+        modal.style.right = 0
+        modal.style.bottom = 0
         modal.style.backgroundColor = 'rgba(0, 0, 0, .6)'
         modal.style.zIndex = 200000
     }
