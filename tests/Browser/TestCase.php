@@ -2,10 +2,12 @@
 
 namespace Radio\Tests\Browser;
 
+use Illuminate\Routing\Router;
+use ReflectionClass;
+use Radio\RadioServiceProvider;
+use Illuminate\Support\Facades\Route;
 use Orchestra\Testbench\Dusk\Options;
 use Orchestra\Testbench\Dusk\TestCase as BaseTestCase;
-use Radio\RadioServiceProvider;
-use ReflectionClass;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -25,12 +27,7 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         $this->tweakApplication(function ($app) {
-            $reflection = new ReflectionClass(static::class);
-            $folder = dirname($reflection->getFileName());
-
-            if (file_exists($routes = $folder . '/routes.php')) {
-                $app['router']->middleware('web')->group($routes);
-            }
+            require_once __DIR__ . '/routes.php';
 
             $app['view']->replaceNamespace('browser', __DIR__);
         });

@@ -2,6 +2,8 @@
 
 namespace Radio\Tests\Browser\Init;
 
+use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Route;
 use Laravel\Dusk\Browser;
 use Radio\Tests\Browser\TestCase;
 
