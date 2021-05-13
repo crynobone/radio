@@ -27,9 +27,9 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         $this->tweakApplication(function ($app) {
-            require_once __DIR__ . '/routes.php';
-
             $app['view']->replaceNamespace('browser', __DIR__);
+
+            require_once __DIR__ . '/routes.php';
         });
     }
 
@@ -42,6 +42,7 @@ abstract class TestCase extends BaseTestCase
 
     protected function getEnvironmentSetUp($app)
     {
+        $app['config']->set('app.debug', true);
         $app['config']->set('app.key', 'base64:Hupx3yAySikrM2/edkZQNQHslgDWYfiBfCuSThJ5SK8=');
         $app['config']->set('database.default', 'sqlite');
     }
