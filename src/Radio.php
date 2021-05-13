@@ -15,6 +15,11 @@ use ReflectionProperty;
 
 trait Radio
 {
+    public function __invoke()
+    {
+        //
+    }
+
     public function callRadioMethod(string $method, array $args = [])
     {
         if (! method_exists($this, $method)) {
