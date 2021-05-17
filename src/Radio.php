@@ -66,33 +66,33 @@ trait Radio
 
     public function dehydrateRadioMethods(): array
     {
-        return [
-            'methods' => collect(
-                    $this->getReflection()->getMethods(ReflectionMethod::IS_PUBLIC)
-                )
-                    ->filter(fn (ReflectionMethod $method) => $this->isRadioCallableMethodName($method->getName()))
-                    ->map(fn (ReflectionMethod $method) => $method->getName())
-                    ->values(),
-        ];
+        $methods = collect(
+            $this->getReflection()->getMethods(ReflectionMethod::IS_PUBLIC)
+        )
+            ->filter(fn (ReflectionMethod $method) => $this->isRadioCallableMethodName($method->getName()))
+            ->map(fn (ReflectionMethod $method) => $method->getName())
+            ->values();
+
+        return ['methods' => $methods];
     }
 
     public function dehydrateRadioState(): array
     {
-        return [
-            'state' => collect(
-                    $this->getReflection()->getProperties(ReflectionProperty::IS_PUBLIC)
-                )->mapWithKeys(function (ReflectionProperty $property) {
-                    $value = $property->getValue($this);
+        $state = collect(
+            $this->getReflection()->getProperties(ReflectionProperty::IS_PUBLIC)
+        )->mapWithKeys(function (ReflectionProperty $property) {
+            $value = $property->getValue($this);
 
-                    if ($value instanceof Stringable) {
-                        $value = $value->__toString();
-                    } elseif ($value instanceof Castable) {
-                        $value = $value->toRadio();
-                    }
+            if ($value instanceof Stringable) {
+                $value = $value->__toString();
+            } elseif ($value instanceof Castable) {
+                $value = $value->toRadio();
+            }
 
-                    return [$property->getName() => $value];
-                }),
-        ];
+            return [$property->getName() => $value];
+        });
+
+        return ['state' => $state];
     }
 
     public function dehydrateRadioData(): array
