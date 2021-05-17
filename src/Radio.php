@@ -64,36 +64,58 @@ trait Radio
         }
     }
 
-    public function getRadioMethods(): Collection
+    public function dehydrateRadioMethods(): array
     {
-        return collect(
-            $this->getReflection()->getMethods(ReflectionMethod::IS_PUBLIC)
+        return [
+            'methods' => collect(
+                    $this->getReflection()->getMethods(ReflectionMethod::IS_PUBLIC)
+                )
+                    ->filter(fn (ReflectionMethod $method) => $this->isRadioCallableMethodName($method->getName()))
+                    ->map(fn (ReflectionMethod $method) => $method->getName())
+                    ->values(),
+        ];
+    }
+
+    public function dehydrateRadioState(): array
+    {
+        return [
+            'state' => collect(
+                    $this->getReflection()->getProperties(ReflectionProperty::IS_PUBLIC)
+                )->mapWithKeys(function (ReflectionProperty $property) {
+                    $value = $property->getValue($this);
+
+                    if ($value instanceof Stringable) {
+                        $value = $value->__toString();
+                    } elseif ($value instanceof Castable) {
+                        $value = $value->toRadio();
+                    }
+
+                    return [$property->getName() => $value];
+                }),
+        ];
+    }
+
+    public function dehydrateRadioData(): array
+    {
+        $data = collect(
+            $this->getReflection()->getMethods()
         )
-            ->filter(fn (ReflectionMethod $method) => $this->isValidMethodName($method->getName()))
-            ->map(fn (ReflectionMethod $method) => $method->getName())
-            ->values();
+            ->filter(fn (ReflectionMethod $method) => $this->isRadioDehydrationMethodName($method->getName()))
+            ->map(fn (ReflectionMethod $method) => $method->invoke($this))
+            ->values()
+            ->toArray();
+
+        return array_merge(...$data);
     }
 
-    public function getRadioState(): Collection
+    protected function isRadioCallableMethodName(string $name): bool
     {
-        return collect(
-            $this->getReflection()->getProperties(ReflectionProperty::IS_PUBLIC)
-        )->mapWithKeys(function (ReflectionProperty $property) {
-            $value = $property->getValue($this);
-
-            if ($value instanceof Stringable) {
-                $value = $value->__toString();
-            } elseif ($value instanceof Castable) {
-                $value = $value->toRadio();
-            }
-
-            return [$property->getName() => $value];
-        });
+        return ! str_starts_with($name, '__') && ! method_exists(Radio::class, $name) && ! str_starts_with($name, 'dehydrateRadio');
     }
 
-    public function isValidMethodName(string $name): bool
+    protected function isRadioDehydrationMethodName(string $name): bool
     {
-        return ! str_starts_with($name, '__') && ! method_exists(Radio::class, $name);
+        return str_starts_with($name, 'dehydrateRadio') && $name !== 'dehydrateRadioData';
     }
 
     protected function getReflection(): ReflectionClass

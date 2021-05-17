@@ -2,11 +2,26 @@ window.Radio = {
     token: document.currentScript.dataset.token,
 }
 
-Radio.mount = function (component, state = {}, methods = [], route = '/radio/call') {
+Radio.mount = function (args) {
+    if (args.events) {
+        args.events.forEach((event) => {
+            document.dispatchEvent(
+                new CustomEvent(event.name, {
+                    bubbles: true,
+                    detail: event.data ?? {},
+                })
+            )
+        })
+    }
+
     return {
-        ...state,
-        ...methods.reduce(function (methods, method) {
-            methods[method] = Radio.call(component, method, route)
+        ...args.state,
+        ...args.methods.reduce(function (methods, method) {
+            methods[method] = Radio.call({
+                component: args.component,
+                method: method,
+                url: args.url,
+            })
 
             return methods
         }, {}),
@@ -34,7 +49,7 @@ Radio.mount = function (component, state = {}, methods = [], route = '/radio/cal
     }
 }
 
-Radio.call = function (component, method, route) {
+Radio.call = function (options) {
     return async function (...args) {
         this.$radio.errors.reset()
 
@@ -47,13 +62,13 @@ Radio.call = function (component, method, route) {
         }))
 
         const body = {
-            component,
+            component: options.component,
+            method: options.method,
             state,
-            method,
             args,
         }
 
-        return fetch(route, {
+        return fetch(options.url, {
             method: 'POST',
             body: JSON.stringify(body),
             credentials: 'same-origin',
@@ -91,6 +106,17 @@ Radio.call = function (component, method, route) {
                     this[key] = value
                 }
             })
+
+            if (json.events) {
+                json.events.forEach((event) => {
+                    document.dispatchEvent(
+                        new CustomEvent(event.name, {
+                            bubbles: true,
+                            detail: event.data ?? {},
+                        })
+                    )
+                })
+            }
 
             return json.result
         }).catch(error => {

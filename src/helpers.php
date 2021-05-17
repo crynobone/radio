@@ -19,13 +19,12 @@ if (! function_exists('Radio\radio')) {
             app()->call($component, $data);
         }
 
-        $constructor = htmlspecialchars(sprintf(
-            'Radio.mount("%s", %s, %s, "%s")',
-            addslashes($component::class),
-            $component->getRadioState()->toJson(),
-            $component->getRadioMethods()->toJson(),
-            URL::signedRoute('radio.call'),
-        ), ENT_QUOTES);
+        $args = json_encode(array_merge([
+            'component' => $component::class,
+            'url' => URL::signedRoute('radio.call'),
+        ], $component->dehydrateRadioData()));
+
+        $constructor = htmlspecialchars("Radio.mount({$args})");
 
         echo $constructor;
     }

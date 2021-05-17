@@ -22,9 +22,8 @@ class CallController
             array_values($request->input('args')),
         );
 
-        return response()->json([
+        return response()->json(array_merge([
             'result' => $result,
-            'state' => $component->getRadioState(),
-        ]);
+        ], $component->dehydrateRadioData()));
     }
 }
