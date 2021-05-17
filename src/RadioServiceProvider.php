@@ -35,7 +35,7 @@ class RadioServiceProvider extends PackageServiceProvider
             try {
                 $script = mix('radio.js', 'vendor/radio');
             } catch (Exception $e) {
-                $script = route('radio.scripts', ['path' => 'radio.js']);
+                $script = route('radio.script', ['path' => 'radio.js']);
             }
 
             return sprintf(
