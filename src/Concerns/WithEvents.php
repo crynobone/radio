@@ -22,7 +22,7 @@ trait WithEvents
         }
     }
 
-    protected function dispatchEvent(string $name, $data = null)
+    protected function dispatchEvent(string $name, $data = null): void
     {
         $this->radioEventQueue[] = [
             'name' => $name,
