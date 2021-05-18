@@ -8,9 +8,12 @@ trait WithEvents
 {
     protected array $radioEventQueue = [];
 
-    protected function clearRadioEventQueue(): void
+    protected function dispatchEvent(string $name, $data = null): void
     {
-        $this->radioEventQueue = [];
+        $this->radioEventQueue[] = [
+            'name' => $name,
+            'data' => $data,
+        ];
     }
 
     public function dehydrateRadioEvents(): array
@@ -22,11 +25,8 @@ trait WithEvents
         }
     }
 
-    protected function dispatchEvent(string $name, $data = null): void
+    protected function clearRadioEventQueue(): void
     {
-        $this->radioEventQueue[] = [
-            'name' => $name,
-            'data' => $data,
-        ];
+        $this->radioEventQueue = [];
     }
 }
