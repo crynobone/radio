@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Radio\Attributes;
 
 use Attribute;
@@ -8,6 +10,6 @@ use Attribute;
 class Computed
 {
     public function __construct(
-        public string $method
+        public string $method,
     ) {}
 }
