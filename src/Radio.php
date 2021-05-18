@@ -20,6 +20,8 @@ trait Radio
 
     public function dehydrateRadioData(): array
     {
+        $this->callRadioHook('dehydrating');
+
         $data = collect(
             $this->getReflection()->getMethods(),
         )
@@ -28,11 +30,22 @@ trait Radio
             ->values()
             ->toArray();
 
-        return array_merge(...$data);
+        try {
+            return array_merge(...$data);
+        } finally {
+            $this->callRadioHook('dehydrated');
+        }
     }
 
     protected function isRadioDehydrationMethodName(string $name): bool
     {
         return str_starts_with($name, 'dehydrateRadio') && $name !== 'dehydrateRadioData';
+    }
+
+    protected function callRadioHook(string $name, ...$args): void
+    {
+        if (! method_exists(static::class, $name)) return;
+
+        $this->{$name}(...$args);
     }
 }

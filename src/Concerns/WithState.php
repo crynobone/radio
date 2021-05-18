@@ -14,6 +14,8 @@ trait WithState
 {
     public function hydrateRadioState(array $state = []): void
     {
+        $this->callRadioHook('hydrating');
+
         $reflection = $this->getReflection();
 
         foreach ($state as $key => $value) {
@@ -26,6 +28,8 @@ trait WithState
                 $property->hasType() ? $property->getType()->getName() : null,
             );
         }
+
+        $this->callRadioHook('hydrated');
     }
 
     protected function transformRadioPropertyValueForHydration($value, ?string $type = null)
