@@ -7,6 +7,7 @@ namespace Radio\Concerns;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Stringable;
+use Radio\Attributes\Computed;
 use Radio\Contracts\Castable;
 use ReflectionProperty;
 
@@ -21,18 +22,19 @@ trait WithState
         foreach ($state as $key => $value) {
             if (! property_exists($this, $key)) continue;
 
+            /** @var \ReflectionProperty $property */
             $property = $reflection->getProperty($key);
 
             $this->{$key} = $this->transformRadioPropertyValueForHydration(
                 $value,
-                $property->hasType() ? $property->getType()->getName() : null,
+                $property->hasType() ? $property->getType()->getName() : null
             );
         }
 
         $this->callRadioHook('hydrated');
     }
 
-    protected function transformRadioPropertyValueForHydration($value, ?string $type = null)
+    protected function transformRadioPropertyValueForHydration($value, ?string $type = null, array $attributes = [])
     {
         if ($type) {
             if ($type === Collection::class) {
@@ -57,18 +59,28 @@ trait WithState
             ->mapWithKeys(function (ReflectionProperty $property) {
                 return [$property->getName() => $this->transformRadioPropertyValueForDehydration(
                     $property->getValue($this),
+                    $property->getAttributes()
                 )];
             });
 
         return ['state' => $state];
     }
 
-    protected function transformRadioPropertyValueForDehydration($value)
+    protected function transformRadioPropertyValueForDehydration($value, array $attributes = [])
     {
         if ($value instanceof Stringable) {
             $value = $value->__toString();
         } elseif ($value instanceof Castable) {
             $value = $value->toRadio();
+        }
+
+        /** @var \ReflectionAttribute[] $attributes */
+        foreach ($attributes as $attribute) {
+            $attribute = $attribute->newInstance();
+
+            if ($attribute instanceof Computed) {
+                $value = $this->{$attribute->method}();
+            }
         }
 
         return $value;
