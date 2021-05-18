@@ -24,7 +24,7 @@ if (! function_exists('Radio\radio')) {
             'url' => URL::signedRoute('radio.call'),
         ], $component->dehydrateRadioData()));
 
-        $constructor = htmlspecialchars("Radio.mount({$args})");
+        $constructor = htmlspecialchars("Radio.mount(\$el, {$args})");
 
         echo $constructor;
     }

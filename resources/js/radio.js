@@ -2,10 +2,10 @@ window.Radio = {
     token: document.currentScript.dataset.token,
 }
 
-Radio.mount = function (args) {
+Radio.mount = function ($el, args) {
     if (args.events) {
         args.events.forEach((event) => {
-            document.dispatchEvent(
+            $el.dispatchEvent(
                 new CustomEvent(event.name, {
                     bubbles: true,
                     detail: event.data ?? {},
@@ -26,7 +26,7 @@ Radio.mount = function (args) {
             return methods
         }, {}),
         $radio: {
-            processing: false,
+            $el,
             errors: {
                 store: {},
                 any() {
@@ -43,8 +43,9 @@ Radio.mount = function (args) {
                 },
                 reset() {
                     this.store = {}
-                }
-            }
+                },
+            },
+            processing: false,
         }
     }
 }
@@ -109,7 +110,7 @@ Radio.call = function (options) {
 
             if (json.events) {
                 json.events.forEach((event) => {
-                    document.dispatchEvent(
+                    this.$radio.$el.dispatchEvent(
                         new CustomEvent(event.name, {
                             bubbles: true,
                             detail: event.data ?? {},
