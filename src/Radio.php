@@ -4,8 +4,6 @@ declare(strict_types = 1);
 
 namespace Radio;
 
-use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Contracts\Support\Jsonable;
 use Radio\Contracts\Castable;
 use Exception;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
@@ -86,7 +84,7 @@ trait Radio
     public function dehydrateRadioMethods(): array
     {
         $methods = collect(
-            $this->getReflection()->getMethods(ReflectionMethod::IS_PUBLIC)
+            $this->getReflection()->getMethods(ReflectionMethod::IS_PUBLIC),
         )
             ->filter(fn (ReflectionMethod $method) => $this->isRadioCallableMethodName($method->getName()))
             ->map(fn (ReflectionMethod $method) => $method->getName())
@@ -98,12 +96,13 @@ trait Radio
     public function dehydrateRadioState(): array
     {
         $state = collect(
-            $this->getReflection()->getProperties(ReflectionProperty::IS_PUBLIC)
-        )->mapWithKeys(function (ReflectionProperty $property) {
-            return [$property->getName() => $this->transformRadioPropertyValueForDehydration(
-                $property->getValue($this),
-            )];
-        });
+            $this->getReflection()->getProperties(ReflectionProperty::IS_PUBLIC),
+        )
+            ->mapWithKeys(function (ReflectionProperty $property) {
+                return [$property->getName() => $this->transformRadioPropertyValueForDehydration(
+                    $property->getValue($this),
+                )];
+            });
 
         return ['state' => $state];
     }
@@ -111,7 +110,7 @@ trait Radio
     public function dehydrateRadioData(): array
     {
         $data = collect(
-            $this->getReflection()->getMethods()
+            $this->getReflection()->getMethods(),
         )
             ->filter(fn (ReflectionMethod $method) => $this->isRadioDehydrationMethodName($method->getName()))
             ->map(fn (ReflectionMethod $method) => $method->invoke($this))
