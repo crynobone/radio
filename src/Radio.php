@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace Radio;
 
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Jsonable;
 use Radio\Contracts\Castable;
 use Exception;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
@@ -37,6 +39,34 @@ trait Radio
         );
     }
 
+    protected function transformRadioPropertyValueForHydration($value, ?string $type = null)
+    {
+        if ($type) {
+            if ($type === Collection::class) {
+                $value = Collection::make($value);
+            } elseif ($type === EloquentCollection::class) {
+                $value = EloquentCollection::make($value);
+            } elseif ($type === Stringable::class) {
+                $value = new Stringable($value);
+            } elseif (class_exists($type) && in_array(Castable::class, class_implements($type))) {
+                $value = $type::fromRadio($value);
+            }
+        }
+
+        return $value;
+    }
+
+    protected function transformRadioPropertyValueForDehydration($value)
+    {
+        if ($value instanceof Stringable) {
+            $value = $value->__toString();
+        } elseif ($value instanceof Castable) {
+            $value = $value->toRadio();
+        }
+
+        return $value;
+    }
+
     public function hydrateRadioState(array $state = []): void
     {
         $reflection = $this->getReflection();
@@ -46,21 +76,10 @@ trait Radio
 
             $property = $reflection->getProperty($key);
 
-            if ($property->hasType()) {
-                $type = $property->getType()->getName();
-
-                if ($type === Collection::class) {
-                    $value = Collection::make($value);
-                } elseif ($type === EloquentCollection::class) {
-                    $value = EloquentCollection::make($value);
-                } elseif ($type === Stringable::class) {
-                    $value = new Stringable($value);
-                } elseif (class_exists($type) && in_array(Castable::class, class_implements($type))) {
-                    $value = $type::fromRadio($value);
-                }
-            }
-
-            $this->{$key} = $value;
+            $this->{$key} = $this->transformRadioPropertyValueForHydration(
+                $value,
+                $property->hasType() ? $property->getType()->getName() : null,
+            );
         }
     }
 
@@ -81,15 +100,9 @@ trait Radio
         $state = collect(
             $this->getReflection()->getProperties(ReflectionProperty::IS_PUBLIC)
         )->mapWithKeys(function (ReflectionProperty $property) {
-            $value = $property->getValue($this);
-
-            if ($value instanceof Stringable) {
-                $value = $value->__toString();
-            } elseif ($value instanceof Castable) {
-                $value = $value->toRadio();
-            }
-
-            return [$property->getName() => $value];
+            return [$property->getName() => $this->transformRadioPropertyValueForDehydration(
+                $property->getValue($this),
+            )];
         });
 
         return ['state' => $state];
