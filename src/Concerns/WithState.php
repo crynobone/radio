@@ -34,7 +34,7 @@ trait WithState
         $this->callRadioHook('hydrated');
     }
 
-    protected function transformRadioPropertyValueForHydration($value, ?string $type = null, array $attributes = [])
+    protected function transformRadioPropertyValueForHydration($value, ?string $type = null)
     {
         if ($type) {
             if ($type === Collection::class) {
