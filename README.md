@@ -23,12 +23,15 @@ Install the `@radioScripts` into your Blade template, along with Alpine.js:
 
 ```html
 <html>
-    ...
+    <head>
+        ...
+        
+        <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+    </head>
     
     <body>
         ...
     
-        <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
         @radioScripts
     </body>
 </html>
@@ -108,7 +111,7 @@ class MyComponent
    - Interact with PHP object properties:
 
        ```php
-       // `Collection`s and `EloquentCollection`s are automatically cast using property type hinting.
+       // `Collection`s and `EloquentCollection`s are automatically cast using property type hinting. Note: objects within a collection are not cast with it.
        public Collection $users;
      
        // ...as well as `Stringable` objects.
