@@ -18,7 +18,6 @@ Radio.mount = function ($el, args) {
         ...args.state,
         ...args.methods.reduce(function (methods, method) {
             methods[method] = Radio.call({
-                component: args.component,
                 method: method,
                 url: args.url,
             })
@@ -63,7 +62,6 @@ Radio.call = function (options) {
         }))
 
         const body = {
-            component: options.component,
             method: options.method,
             state,
             args,

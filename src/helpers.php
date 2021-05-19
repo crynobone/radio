@@ -20,8 +20,9 @@ if (! function_exists('Radio\radio')) {
         }
 
         $args = json_encode(array_merge([
-            'component' => $component::class,
-            'url' => URL::signedRoute('radio.call'),
+            'url' => URL::signedRoute('radio.call', [
+                'component' => $component::class,
+            ]),
         ], $component->dehydrateRadioData()));
 
         $constructor = htmlspecialchars("Radio.mount(\$el, {$args})");
