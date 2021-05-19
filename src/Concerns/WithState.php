@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Stringable;
 use Radio\Attributes\Computed;
+use Radio\Attributes\EagerLoad;
 use Radio\Contracts\Castable;
+use ReflectionAttribute;
 use ReflectionProperty;
 
 trait WithState
@@ -30,7 +32,11 @@ trait WithState
                 $key,
                 $value,
                 $property->hasType() ? $property->getType()->getName() : null,
-                $meta
+                array_merge($meta, [
+                    'attributes' => collect($property->getAttributes())->mapWithKeys(function (ReflectionAttribute $attribute) {
+                        return [$attribute->getName() => $attribute->newInstance()];
+                    })->toArray()
+                ])
             );
         }
 
@@ -41,7 +47,13 @@ trait WithState
     {
         if ($type) {
             if (is_subclass_of($type, Model::class) && $key = data_get($meta, "models.{$key}.key") && $columns = data_get($meta, "models.{$key}.columns")) {
-                $model = $type::findOrFail($key);
+                $model = $type::query()
+                    ->when(array_key_exists(EagerLoad::class, $meta['attributes']), function ($query) use ($meta) {
+                        $query->with(
+                            $meta['attributes'][EagerLoad::class]->relationships
+                        );
+                    })
+                    ->findOrFail($key);
                 
                 foreach ($value as $column => $data) {
                     if (! array_key_exists($column, $columns)) continue;
