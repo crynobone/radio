@@ -14,6 +14,10 @@ Radio.mount = function ($el, args) {
         })
     }
 
+    $el.__radio = {
+        models: args.models,
+    }
+
     return {
         ...args.state,
         ...args.methods.reduce(function (methods, method) {
@@ -65,6 +69,7 @@ Radio.call = function (options) {
             method: options.method,
             state,
             args,
+            meta: this.$el.__radio
         }
 
         return fetch(options.url, {

@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Radio\Concerns;
 
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Stringable;
 use Radio\Attributes\Computed;
@@ -13,7 +14,7 @@ use ReflectionProperty;
 
 trait WithState
 {
-    public function hydrateRadioState(array $state = []): void
+    public function hydrateRadioState(array $state = [], array $meta = []): void
     {
         $this->callRadioHook('hydrating');
 
@@ -26,18 +27,31 @@ trait WithState
             $property = $reflection->getProperty($key);
 
             $this->{$key} = $this->transformRadioPropertyValueForHydration(
+                $key,
                 $value,
-                $property->hasType() ? $property->getType()->getName() : null
+                $property->hasType() ? $property->getType()->getName() : null,
+                $meta
             );
         }
 
         $this->callRadioHook('hydrated');
     }
 
-    protected function transformRadioPropertyValueForHydration($value, ?string $type = null)
+    protected function transformRadioPropertyValueForHydration(string $key, $value, ?string $type = null, array $meta = [])
     {
         if ($type) {
-            if ($type === Collection::class) {
+            if (is_subclass_of($type, Model::class) && $key = data_get($meta, "models.{$key}.key") && $columns = data_get($meta, "models.{$key}.columns")) {
+                $model = $type::findOrFail($key);
+                
+                foreach ($value as $column => $data) {
+                    if (! array_key_exists($column, $columns)) continue;
+                    if ($column === $model->getKeyName()) continue;
+
+                    $model->{$column} = $data;
+                }
+
+                $value = $model;
+            } elseif ($type === Collection::class) {
                 $value = Collection::make($value);
             } elseif ($type === EloquentCollection::class) {
                 $value = EloquentCollection::make($value);
@@ -53,6 +67,8 @@ trait WithState
 
     public function dehydrateRadioState(): array
     {
+        $models = collect();
+
         $state = collect(
             $this->getReflection()->getProperties(ReflectionProperty::IS_PUBLIC),
         )
@@ -61,9 +77,20 @@ trait WithState
                     $property->getValue($this),
                     $property->getAttributes()
                 )];
+            })
+            ->each(function ($value, string $key) use ($models) {
+                if ($value instanceof Model) {
+                    $models[$key] = [
+                        'key' => $value->getKey(),
+                        'columns' => $value->attributesToArray()
+                    ];
+                }
             });
 
-        return ['state' => $state];
+        return [
+            'state' => $state,
+            'models' => $models,
+        ];
     }
 
     protected function transformRadioPropertyValueForDehydration($value, array $attributes = [])

@@ -15,6 +15,7 @@ class CallController
 
         $component->hydrateRadioState(
             $request->input('state'),
+            $request->input('meta', []),
         );
 
         $result = $component->callRadioMethod(
